@@ -22,6 +22,18 @@ namespace Capstone.Classes
         //--------
         public bool Stock()
         {
+            string directory = Environment.CurrentDirectory;
+            string fileName = "vendingmachine.csv";
+            string fullPath = Path.Combine(directory, fileName);
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(fullPath))
+                {
+
+                }
+            }
+            
             return false;
         }
         public bool WriteLog()
