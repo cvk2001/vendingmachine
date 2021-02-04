@@ -12,8 +12,8 @@ namespace Capstone.Classes
         public decimal Balance { get; private set; }
         private string LogFile {get; set;}
         private string WorkingDirectory { get; }
-        private Dictionary<string, Item> Products { get; set; } = new Dictionary<string, Item>();
-        private Dictionary<string, int> Quantities { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, Item> Products { get; private set; } = new Dictionary<string, Item>();
+        public Dictionary<string, int> Quantities { get; set; } = new Dictionary<string, int>();
 
         // Constructor
         //------------
