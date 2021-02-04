@@ -9,22 +9,13 @@ namespace Capstone.Classes
         // Properties
         //-----------
         public static string[] TypeOfProduct { get; } = new string[] { "Candy", "Chip", "Drink", "Gum" };
-        public string SlotLocation { get; }
         public string ProductName { get; }
         public decimal Price { get; }
 
         // Constructor
         //------------
-        public Item(string slotLocation, string productName, decimal price)
-        {
-            if(slotLocation != null)
-            {
-                SlotLocation = slotLocation;
-            } else
-            {
-                throw new ArgumentException("Please make sure all slot locations are accurate.");
-            }
-            
+        public Item(string productName, decimal price)
+        {            
             if(productName != null)
             {
                 ProductName = productName;
