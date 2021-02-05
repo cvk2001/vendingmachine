@@ -8,7 +8,7 @@ namespace Capstone.Classes
     {
         // Properties
         //-----------
-        private VendingMachine infernalMachine { get; set; }
+        private VendingMachine Machine { get; set; } = new VendingMachine();
 
         // Constructor
         //------------
@@ -17,9 +17,6 @@ namespace Capstone.Classes
         //--------
         public void Start()
         {
-            VendingMachine infernalMachine = new VendingMachine();
-            //Console.WriteLine(Machine.Balance);
-
             bool doneShopping = false;
             string mainMenu = "";
             string purchaseMenu = "";
@@ -62,7 +59,7 @@ namespace Capstone.Classes
                 "(1) Feed Money\n" +
                 "(2) Select Product\n" +
                 "(3) Finish Transaction\n" +
-                $"Current Money Provided: \n" + //{Machine.Balance.ToString("C2").PadLeft(6)}\n" +
+                $"Current Money Provided: {Machine.Balance.ToString("C2").PadLeft(6)}\n" +
                 $">>");
             choice = Console.ReadLine();
 
@@ -78,14 +75,14 @@ namespace Capstone.Classes
         {
             string slotLocation = "";
 
-            Console.WriteLine("Please select which item you would like to purchase:");
+            Console.WriteLine("\nPlease select which item you would like to purchase:");
 
-            foreach(KeyValuePair<string, Item> kvp in infernalMachine.Products)
+            foreach(KeyValuePair<string, Item> kvp in Machine.Products)
             {
                 string slot = kvp.Key;
                 Item product = kvp.Value;
                 Console.Write($"{slot}) {product.ProductName}");
-                Console.WriteLine(infernalMachine.Quantities[slot].Equals(0) ? " Sold Out" : "");
+                Console.WriteLine(Machine.Quantities[slot].Equals(0) ? " Sold Out" : "");
             }
             Console.WriteLine();
 

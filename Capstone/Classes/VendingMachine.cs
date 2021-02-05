@@ -71,7 +71,7 @@ namespace Capstone.Classes
             }
             catch(FileNotFoundException ex)
             {
-                Console.WriteLine("There has been a file error after the program began.  Please try again");
+                Console.WriteLine("There has been a file error after the program began. Please try again");
             }
             
             return false;
