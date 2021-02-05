@@ -8,7 +8,7 @@ namespace Capstone.Classes
     {
         // Properties
         //-----------
-        private VendingMachine Machine { get; set; }
+        private VendingMachine infernalMachine { get; set; }
 
         // Constructor
         //------------
@@ -17,9 +17,10 @@ namespace Capstone.Classes
         //--------
         public void Start()
         {
-            VendingMachine Machine = new VendingMachine();
+            VendingMachine infernalMachine = new VendingMachine();
             //Console.WriteLine(Machine.Balance);
 
+            bool doneShopping = false;
             string mainMenu = "";
             string purchaseMenu = "";
             string slotLocation = "";
@@ -27,9 +28,12 @@ namespace Capstone.Classes
             Console.WriteLine("Welcome to the Vending Machine!\n" +
                 "We can supply you with all your snacking needs.");
 
-            mainMenu = MainMenu();
-
-            MainMenuSwitch(mainMenu);
+            do
+            {
+                mainMenu = MainMenu();
+                doneShopping = MainMenuSwitch(mainMenu);
+            } while (!doneShopping);
+            
         }
         private string MainMenu()
         {
@@ -58,7 +62,7 @@ namespace Capstone.Classes
                 "(1) Feed Money\n" +
                 "(2) Select Product\n" +
                 "(3) Finish Transaction\n" +
-                $"Current Money Provided: {Machine.Balance.ToString("C2").PadLeft(6)}\n" +
+                $"Current Money Provided: \n" + //{Machine.Balance.ToString("C2").PadLeft(6)}\n" +
                 $">>");
             choice = Console.ReadLine();
 
@@ -76,12 +80,12 @@ namespace Capstone.Classes
 
             Console.WriteLine("Please select which item you would like to purchase:");
 
-            foreach(KeyValuePair<string, Item> kvp in Machine.Products)
+            foreach(KeyValuePair<string, Item> kvp in infernalMachine.Products)
             {
                 string slot = kvp.Key;
                 Item product = kvp.Value;
                 Console.Write($"{slot}) {product.ProductName}");
-                Console.WriteLine(Machine.Quantities[slot].Equals(0) ? " Sold Out" : "");
+                Console.WriteLine(infernalMachine.Quantities[slot].Equals(0) ? " Sold Out" : "");
             }
             Console.WriteLine();
 
@@ -139,34 +143,32 @@ namespace Capstone.Classes
             
             return money;
         }
-        private void MainMenuSwitch(string mainMenu)
+        private bool MainMenuSwitch(string mainMenu)
         {
             bool doneShopping = false;
             string choice = "";
 
-            do
+            switch (mainMenu)
             {
-                mainMenu = MainMenu();
+                case "1":
+                    choice = ProductList();
+                    break;
+                case "2":
+                    choice = PurchaseMenu();
+                    break;
+                case "3":
+                    Console.WriteLine("Have a great day!");
+                    doneShopping = true;
+                    break;
+                case "4":
+                    Console.WriteLine("Ssshh... The secret file is not ready yet.\n");
+                    break;
+                default:
+                    mainMenu = MainMenu();
+                    break;
+            }
 
-                switch (mainMenu)
-                {
-                    case "1":
-                        choice = ProductList();
-                        break;
-                    case "2":
-                        choice = PurchaseMenu();
-                        break;
-                    case "3":
-                        Console.WriteLine("Have a great day!");
-                        break;
-                    case "4":
-                        Console.WriteLine("Ssshh... The secret file is not ready yet.");
-                        break;
-                    default:
-                        mainMenu = MainMenu();
-                        break;
-                }
-            } while (!doneShopping);
+            return doneShopping;
         }
     }
 }
