@@ -47,10 +47,10 @@ namespace CapstoneTests.Vending_Machine_Tests
             expectedDictionary["D3"] = "Chiclets";
             expectedDictionary["D4"] = "Triplemint";
             //Act
-            Dictionary<string, Item> actualDictionary = vendingMachine.Stock();
+            vendingMachine.Stock();
 
             //assert
-            CollectionAssert.AreEqual(expectedDictionary, actualDictionary);
+            CollectionAssert.AreEqual(expectedDictionary, vendingMachine.Products.Values);
 
         }
 

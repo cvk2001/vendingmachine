@@ -25,19 +25,53 @@ namespace Capstone.Classes
             string directory = Environment.CurrentDirectory;
             string fileName = "vendingmachine.csv";
             string fullPath = Path.Combine(directory, fileName);
-
+            Item temp;
             try
             {
                 using (StreamReader sr = new StreamReader(fullPath))
                 {
-
+                    while (!sr.EndOfStream) 
+                    { 
+                        string line = sr.ReadLine();
+                        string[] lineSeperated = line.Split('|');
+                        string productName = lineSeperated[1];
+                        decimal price = decimal.Parse(lineSeperated[2]);
+                        switch (lineSeperated[3])
+                        {
+                            case "Candy":
+                                temp = new Candy(productName,price);
+                                break;
+                            case "Chip":
+                                temp = new Chip(productName, price);
+                                break;
+                            case "Drink":
+                                temp = new Drink(productName, price);
+                                break;
+                            case "Gum":
+                                temp = new Gum(productName, price);
+                                break;
+                            default:
+                                throw new FormatException("Something is terribly wrong Dave");
+                                break;
+                        }
+                        
+                                                                    //This makes me think we should be setting the item name here and getting it from the vending machine though an item should know its name
+                        Products[lineSeperated[0]] = temp; //I tried some things with item, but what I tried didn't work.
+                        Quantities[lineSeperated[0]] = 5;               //maybe the dictionary statement should read public Dictionary<string,string> Products{get; private set;} = new Dictionary<string,item>;?
+                    }
                 }
+            }
+            catch(FileNotFoundException ex)
+            {
+                Console.WriteLine("There has been a file error after the program began.  Please try again");
             }
             
             return false;
         }
         public bool WriteLog()
         {
+
+
             return false;
         }
         public decimal AcceptMoney()
