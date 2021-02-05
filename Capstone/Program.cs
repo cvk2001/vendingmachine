@@ -7,7 +7,7 @@ namespace Capstone
     {
         static void Main(string[] args)
         {
-            UI ui = new UI();
+            UI2 ui = new UI2();
             ui.Start();
         }
     }
