@@ -20,6 +20,7 @@ namespace Capstone.Classes
         public VendingMachine()
         {
             Balance = 0;
+            WorkingDirectory = Environment.CurrentDirectory;
             Stock();
         }
 
@@ -27,9 +28,8 @@ namespace Capstone.Classes
         //--------
         private bool Stock()
         {
-            string directory = Environment.CurrentDirectory;    // Eventually we will want to have this set in the constructor to the Working Directory property.
             string fileName = "vendingmachine.csv";
-            string fullPath = Path.Combine(directory, fileName);
+            string fullPath = Path.Combine(WorkingDirectory, fileName);
 
             Item temp;
 
@@ -209,7 +209,58 @@ namespace Capstone.Classes
         }
         public void HiddenSalesReport()
         {
+            int itemCount = 0;
+            Dictionary<string,int> salesItems = new Dictionary<string, int>();
+            string fileName = "log.txt";
+            string fullPath = Path.Combine(WorkingDirectory, fileName);
+            try
+            {
+                using (StreamReader sr = new StreamReader(fullPath))
+                {
 
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        if (!line.Contains("FEED") || !line.Contains("GIVE"))
+                        { 
+
+                            for (int i = 0; i < line.Length; i++)
+                            {
+                                
+                                    salesItems[line[3]] = itemCount + 1;
+                            }
+                        }
+                        
+                        
+                    }
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine("File not found...no report for you");
+            }catch (Exception e)
+            {
+                Console.WriteLine("Some other error occurred that Zach could not figure out");
+            }
+            try
+            {
+                using (StreamWriter sw = new StreamWriter("SalesReport" + DateTime.Now + ".txt"))
+                {
+                    sw.WriteLine($"{salesItems.Keys}|{salesItems.Values}");
+                }
+            }
+            catch (FileNotFoundException error)
+            {
+                Console.WriteLine("something happened to the file");
+            }catch (Exception e)
+            {
+                Console.WriteLine("Zach missed something again");
+            }
+                    
         }
     }
 }
+
+
+    
+
