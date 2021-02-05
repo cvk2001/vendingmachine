@@ -10,7 +10,13 @@ namespace CapstoneTests.Vending_Machine_Tests
     public class VendingMachinetest
     {
         [TestMethod]
-        public void WriteLogTest()
+        public void WriteLogBalanceTest()
+        {
+            // Assert
+            Assert.IsTrue(File.Exists(Path.Combine(Environment.CurrentDirectory + "log.txt")));
+        }
+        [TestMethod]
+        public void WriteLogPurchaseTest()
         {
             // Assert
             Assert.IsTrue(File.Exists(Path.Combine(Environment.CurrentDirectory + "log.txt")));
