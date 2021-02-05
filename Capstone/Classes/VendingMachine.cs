@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Globalization;
+using System.Reflection;
 
 namespace Capstone.Classes
 {
@@ -25,7 +27,7 @@ namespace Capstone.Classes
 
         // Methods
         //--------
-        private bool Stock()
+        private void Stock()
         {
             string directory = Environment.CurrentDirectory;    // Eventually we will want to have this set in the constructor to the Working Directory property.
             string fileName = "vendingmachine.csv";
@@ -76,8 +78,6 @@ namespace Capstone.Classes
             {
                 Console.WriteLine("An unexpected error occured. Please try again.");
             }
-            
-            return false;
         }
 
         
