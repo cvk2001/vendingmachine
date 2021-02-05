@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using System.Threading;
 
 namespace Capstone.Classes
 {
@@ -17,25 +19,40 @@ namespace Capstone.Classes
         //--------
         public void Start()
         {
-            bool doneShopping = false;
-            string mainMenu = "";
-            string purchaseMenu = "";
-            string slotLocation = "";
+            // Main Menu
+            // MainMenuChoice
+            // MainMenuSwitch
 
-            Console.WriteLine("Welcome to the Vending Machine!\n" +
-                "We can supply you with all your snacking needs.");
+            // 1) Print Product List
+
+            // 2) Purchase Menu
+            //          PurchaseMenuChoice
+            //          PurchaseMenuSwitch
+            //      1) Feed Money
+            //      2) Select Product
+            //          Print Product List
+            //          SelectProduct
+            //      3) Finish Transaction
+
+            // 3) Exit
+
+            // (Hidden) 4) Print Report
+
+            VendingMachine Machine = new VendingMachine();
+            bool keepShopping = true;
 
             do
             {
-                mainMenu = MainMenu();
-                doneShopping = MainMenuSwitch(mainMenu);
-            } while (!doneShopping);
-            
+                keepShopping = MainMenuSwitch(MainMenuChoice());
+            } while (keepShopping);
+
+            Console.WriteLine("\nHave a great day!");
         }
-        private string MainMenu()
+        private string MainMenuChoice()
         {
             string choice = "";
 
+            //Console.Clear();
             Console.Write("Please make a selection form the following options:\n" +
                 "(1) Display Vending Machine Items\n" +
                 "(2) Purchase\n" +
@@ -43,152 +60,193 @@ namespace Capstone.Classes
                 ">> ");
             choice = Console.ReadLine();
 
-            while(choice != "1" && choice != "2" && choice != "3" && choice != "4")
+            while (choice != "1" && choice != "2" && choice != "3" && choice != "4")
             {
-                Console.WriteLine("Sorry, please choose 1, 2, or 3: ");
+                Console.Write("Sorry, please choose 1, 2, or 3: ");
                 choice = Console.ReadLine();
             }
 
             return choice;
         }
-        private string PurchaseMenu()
+        private void MainMenuPrint()
+        {
+
+        }
+        private bool MainMenuSwitch(string choice)
+        {
+            bool keepShopping = true;
+
+            switch (choice)
+            {
+                case "1":
+                    // Product List
+                    ProductList();
+                    break;
+                case "2":
+                    // Purchase Menu
+                    PurchaseMenuSwitch();
+                    break;
+                case "3":
+                    // Exit
+                    keepShopping = false;
+                    break;
+                case "4":
+                    // Print Sales Report
+                    break;
+                default:
+                    keepShopping = true;
+                    break;
+            }
+
+            return keepShopping;
+        }
+        private void ProductList()
+        {
+            Console.WriteLine(); // Give the previous menu some space.
+
+            foreach (KeyValuePair<string, Item> kvp in Machine.Products)
+            {
+                string slot = kvp.Key;
+                Item product = kvp.Value;
+
+                Console.Write($"{slot}) {product.ProductName.PadRight(20)}" +
+                    $"{product.Price.ToString("C2").PadLeft(6)}" +
+                    $"{Machine.Quantities[slot].ToString().PadLeft(3)}");
+                Console.WriteLine(Machine.Quantities[slot].Equals(0) ? " Sold Out" : "");
+            }
+            Console.WriteLine();
+        }
+        private string PurchaseMenuChoice()
         {
             string choice = "";
 
-            Console.Write("Please make a selection form the following options:\n" +
+            Console.Write("\nPlease make a selection form the following options:\n" +
                 "(1) Feed Money\n" +
                 "(2) Select Product\n" +
                 "(3) Finish Transaction\n" +
                 $"Current Money Provided: {Machine.Balance.ToString("C2").PadLeft(6)}\n" +
-                $">>");
+                $">> ");
             choice = Console.ReadLine();
 
             while (choice != "1" && choice != "2" && choice != "3")
             {
-                Console.WriteLine("Sorry, please choose 1, 2, or 3: ");
+                Console.Write("Sorry, please choose 1, 2, or 3: ");
                 choice = Console.ReadLine();
             }
 
             return choice;
         }
-        private string PurchaseProduct()
+        private void PurchaseMenuSwitch()
         {
-            string slotLocation = "";
-
-            Console.WriteLine("\nPlease select which item you would like to purchase:");
-
-            foreach(KeyValuePair<string, Item> kvp in Machine.Products)
-            {
-                string slot = kvp.Key;
-                Item product = kvp.Value;
-                Console.Write($"{slot}) {product.ProductName}");
-                Console.WriteLine(Machine.Quantities[slot].Equals(0) ? " Sold Out" : "");
-            }
-            Console.WriteLine();
-
-            slotLocation = Console.ReadLine();
-
-            return slotLocation;
-        }
-        private decimal FeedMoney()
-        {
-            decimal balance = 0M;
-            string bill = "";
-            bool moreBills = false;
-            string yn = "";
+            bool moreTransactions = true;
+            string choice = "";
 
             do
             {
-                bool validBill = false;
+                choice = PurchaseMenuChoice();
 
-                Console.Write("Please enter the bill you would like to insert: ");
-                bill = Console.ReadLine();
-
-                do
+                switch (choice)
                 {
-                    try
-                    {
-                        decimal temp = decimal.Parse(bill);
-                        balance = Machine.AcceptMoney(temp);
-                        validBill = true;
-                        Console.WriteLine($"So far you have inserted {balance.ToString("C2")}.\n");
-                        
-                    }
-                    catch (Exception e)
-                    {
-                        Console.Write("Please enter a valid Bill: ");
-                        bill = Console.ReadLine();
-                        validBill = false;
-                    }
+                    case "1":
+                        // Feed Money
+                        FeedMoney();
+                        break;
+                    case "2":
+                        // Select Product
+                        ProductList();
+                        SelectProduct();
+                        break;
+                    case "3":
+                        // Finish Transaction
+                        PrintChange(Machine.GiveChange());
+                        moreTransactions = false;
+                        break;
+                    default:
+                        moreTransactions = true;
+                        break;
+                }
+            } while (moreTransactions);
+        }
+        private decimal FeedMoney()
+        {
+            string bill = "";
+            decimal balance = 0M;
+            bool validBill = false;
 
-                } while (!validBill);
+            Console.Write("\nPlease enter the bill you would like to insert: ");
+            bill = Console.ReadLine();
 
-                do
+            do
+            {
+                try
                 {
-                    Console.Write("Would you like to insert more (Y/N): ");
-                    yn = Console.ReadLine().Trim().ToLower().Substring(0, 1);
-                } while (yn != "y" && yn != "n");
+                    decimal temp = decimal.Parse(bill);
+                    balance = Machine.AcceptMoney(temp);
+                    validBill = true;
+                    //Console.WriteLine($"\nSo far you have inserted {balance.ToString("C2")}.\n");
+                    //Thread.Sleep(1500);
+                    Console.Clear();
+                }
+                catch (Exception e)
+                {
+                    Console.Write("Please enter a valid Bill: ");
+                    bill = Console.ReadLine();
+                    validBill = false;
+                }
+            } while (!validBill);
 
-                moreBills = yn == "y" ? true : false;
-
-            } while (moreBills);
-            
             return balance;
         }
-        private bool MainMenuSwitch(string mainMenu)
+        private string SelectProduct()
         {
-            bool doneShopping = false;
-            string choice = "";
+            string slotLocation = "";
+            bool isDispensed = false;
 
-            switch (mainMenu)
+            Console.Write("\nPlease select which item you would like to purchase: ");
+            slotLocation = Console.ReadLine();
+
+            do
             {
-                case "1":
-                    choice = PurchaseProduct();
-                    break;
-                case "2":
-                    choice = PurchaseMenu();
-                    PurchaseMenuSwitch(choice);
-                    break;
-                case "3":
-                    Console.WriteLine("Have a great day!");
-                    doneShopping = true;
-                    break;
-                case "4":
-                    Console.WriteLine("Ssshh... The secret file is not ready yet.\n");
-                    break;
-                default:
-                    mainMenu = MainMenu();
-                    break;
-            }
+                try
+                {
+                    string itemPrintOut = Machine.DispenseItem(slotLocation);
+                    Console.WriteLine(itemPrintOut);
+                    isDispensed = true;
+                } catch(Exception ex)
+                {
+                    Console.WriteLine($"\n{ex.Message}");
+                    Console.Write("Please select another slot (q to return to purchase menu): ");
+                    slotLocation = Console.ReadLine();
+                    isDispensed = false;
+                }
 
-            return doneShopping;
-        }
-        private void PurchaseMenuSwitch(string purchaseMenu)
-        {
-            switch (purchaseMenu)
-            {
-                case "1":
-                    FeedMoney();
-                    break;
-                case "2":
-                    string slotLocation = PurchaseProduct();
-                    Machine.DispenseItem(slotLocation);
-                    break;
-                case "3":
-                    Console.WriteLine(PrintChange(Machine.GiveChange()));
-                    break;
-                default:
-                    throw new ArgumentException("Selection was not a \"1\", \"2\", or \"3\"");
+                if (slotLocation == "q")
+                {
+                    isDispensed = true;     // Exit the loop if the customer would like to enter more money.
+                    Console.WriteLine("Returning to purchase menu.");
+                    Thread.Sleep(1250);
+                    Console.Clear();
+                }
 
-            }
+            } while (!isDispensed);
+            
+
+            return slotLocation;
         }
-        private string PrintChange(Dictionary<string,int>change)
+        private string PrintChange(Dictionary<string, int> change)
         {
             string printChange = "";
-            foreach (KeyValuePair<string,int> kvp  in change)
+
+            Console.WriteLine("\nYour change is:");
+            foreach (KeyValuePair<string, int> kvp in change)
             {
-                printChange += $"{kvp.Key}: {kvp.Value}\n";
+                printChange += $"{kvp.Key}:".PadRight(10) + $"{kvp.Value}\n".PadLeft(6);
             }
+
+            printChange += "\n\n\n";
+
+            Console.WriteLine(printChange);
+
             return printChange;
         }
     }

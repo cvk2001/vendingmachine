@@ -81,14 +81,14 @@ namespace Capstone.Classes
         }
 
         
-        public bool WriteLogBalance(string transActionName, decimal amountOfTX)
+        public bool WriteLogBalance(string transactionName, decimal amountOfTX)
         {
             try
             {
                 using (StreamWriter sw = new StreamWriter("log.txt",true))
                 {
-                    sw.WriteLine($"{DateTime.Now} {transActionName + ":".PadRight(20)}" +
-                        $" {amountOfTX.ToString("C2").PadLeft(6)} {Balance.ToString("C2").PadLeft(6)}");
+                    sw.WriteLine($"{DateTime.Now} {transactionName.PadRight(23)}" +
+                        $" {amountOfTX.ToString("C2").PadLeft(8)} {Balance.ToString("C2").PadLeft(8)}");
                 }
             }catch (IOException e)
             {
@@ -96,14 +96,16 @@ namespace Capstone.Classes
             }
 
             return false;
-        } public bool WriteLogPurchase(string productName, decimal initialBalance)
+        } public bool WriteLogPurchase(string productName, string slotLocation, decimal initialBalance)
         {
             try
             {
                 using (StreamWriter sw = new StreamWriter("log.txt", true))
                 {
-                    sw.WriteLine($"{DateTime.Now} {productName.PadRight(20)}: " +
-                        $"{initialBalance.ToString("C2").PadLeft(6)} {Balance.ToString("C2").PadLeft(6)}");
+                    sw.WriteLine($"{DateTime.Now} {productName.PadRight(20)}" +
+                        $"{slotLocation.PadRight(4)}" +
+                        $"{initialBalance.ToString("C2").PadLeft(8)} " +
+                        $"{Balance.ToString("C2").PadLeft(8)}");
                 }
             }
             catch (IOException e)
@@ -121,12 +123,12 @@ namespace Capstone.Classes
             if (bill == 1 || bill == 2 || bill == 5 || bill == 10 || bill == 20 || bill == 50 || bill == 100)
             {
                 Balance += bill;
+                WriteLogBalance("FEED MONEY:", bill);
             }
             else
             {
-                throw new ArgumentException("That is not a valid Bill");
+                throw new ArgumentException("That is not a valid bill.");
             }
-            WriteLogBalance("FEED MONEY",bill);
 
             return Balance;
         }
@@ -143,9 +145,11 @@ namespace Capstone.Classes
                         decimal initialBalance = Balance;
                         Quantities[slotLocation]--;
                         Balance -= Products[slotLocation].Price;
-                        WriteLogPurchase(Products[slotLocation].ProductName, initialBalance);
-                        itemDispensed = $"{Products[slotLocation].ProductName} {Products[slotLocation].Price} " +
-                            $"{Balance} \n {Products[slotLocation].Sound()}";
+                        WriteLogPurchase(Products[slotLocation].ProductName, slotLocation, initialBalance);
+                        itemDispensed = $"\nThank you for purchasing: {Products[slotLocation].ProductName}\n" +
+                            $"It cost {Products[slotLocation].Price.ToString("C2")}\n" +
+                            $"Your current Balance is {Balance.ToString("C2")}\n" +
+                            $"{Products[slotLocation].Sound()}";
                     }
                     else
                     {
@@ -191,54 +195,21 @@ namespace Capstone.Classes
                 string type = kvp.Key;
                 decimal amount = kvp.Value;
 
-                //if(Balance / )
+                if(Balance / amount >= 1)
+                {
+                    int howMany = (int)(Balance / amount);
+                    change[type] = howMany;
+                    Balance -= howMany * amount;
+                }
             }
 
-            if (Balance % 20 == 0)
-            {
-                int twenties = Convert.ToInt32(Balance) / 20;
-                change["twenties"] = twenties;
-                Balance -= twenties * 20;
-            }if (Balance % 10 == 0)
-            {
-                int tens = Convert.ToInt32(Balance) / 10;
-                change["tens"] = tens;
-                Balance -= tens * 10;
-            }if (Balance % 5 == 0)
-            {
-                int fives = Convert.ToInt32(Balance) / 5;
-                change["fives"] = fives;
-                Balance -= fives * 5;
-            }
-            if (Balance % 1 == 0)
-            {
-                int ones = Convert.ToInt32(Balance);
-                change["ones"] = ones;
-                Balance -= ones;
-            }
-            if ((Balance*100) % 25 == 0)
-            {
-                int quarters = Convert.ToInt32(Balance*100) / 25;
-                change["quarters"] = quarters;
-                Balance -= quarters * 0.25M;
-            }if ((Balance*100) % 10 == 0)
-            {
-                int dimes = Convert.ToInt32(Balance*100) / 10;
-                change["dimes"] = dimes;
-                Balance -= dimes * 0.10M;
-            }if ((Balance*100) % 5 == 0)
-            {
-                int nickels = Convert.ToInt32(Balance*100) / 5;
-                change["nickels"] = nickels;
-                Balance -= nickels * 0.25M;
-            }
-                       
-                change["pennies"] = Convert.ToInt32(Balance)*100;
-
-            WriteLogBalance("Give Change", intialBalance);
+            WriteLogBalance("GIVE CHANGE:", intialBalance);
                        
             return change;
-            
+        }
+        public void HiddenSalesReport()
+        {
+
         }
     }
 }
