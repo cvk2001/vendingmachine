@@ -17,23 +17,29 @@ namespace Capstone.Classes
         //--------
         public void Start()
         {
+            VendingMachine Machine = new VendingMachine();
+            //Console.WriteLine(Machine.Balance);
+
             string mainMenu = "";
             string purchaseMenu = "";
             string slotLocation = "";
 
-            Console.WriteLine("Welcome to the Vending Machine!" +
+            Console.WriteLine("Welcome to the Vending Machine!\n" +
                 "We can supply you with all your snacking needs.");
 
-            
+            mainMenu = MainMenu();
+
+            MainMenuSwitch(mainMenu);
         }
         private string MainMenu()
         {
             string choice = "";
 
-            Console.WriteLine("Please make a selection form the following options:" +
-                "(1) Display Vending Machine Items" +
-                "(2) Purchase" +
-                "(3) Exit\n");
+            Console.Write("Please make a selection form the following options:\n" +
+                "(1) Display Vending Machine Items\n" +
+                "(2) Purchase\n" +
+                "(3) Exit\n" +
+                ">> ");
             choice = Console.ReadLine();
 
             while(choice != "1" && choice != "2" && choice != "3" && choice != "4")
@@ -48,11 +54,12 @@ namespace Capstone.Classes
         {
             string choice = "";
 
-            Console.WriteLine("Please make a selection form the following options:" +
-                "(1) Feed Money" +
-                "(2) Select Product" +
+            Console.Write("Please make a selection form the following options:\n" +
+                "(1) Feed Money\n" +
+                "(2) Select Product\n" +
                 "(3) Finish Transaction\n" +
-                $"Current Money Provided: {Machine.Balance.ToString("C2").PadLeft(6)}\n");
+                $"Current Money Provided: {Machine.Balance.ToString("C2").PadLeft(6)}\n" +
+                $">>");
             choice = Console.ReadLine();
 
             while (choice != "1" && choice != "2" && choice != "3")
@@ -68,6 +75,7 @@ namespace Capstone.Classes
             string slotLocation = "";
 
             Console.WriteLine("Please select which item you would like to purchase:");
+
             foreach(KeyValuePair<string, Item> kvp in Machine.Products)
             {
                 string slot = kvp.Key;
@@ -76,6 +84,7 @@ namespace Capstone.Classes
                 Console.WriteLine(Machine.Quantities[slot].Equals(0) ? " Sold Out" : "");
             }
             Console.WriteLine();
+
             slotLocation = Console.ReadLine();
 
             return slotLocation;
@@ -96,8 +105,8 @@ namespace Capstone.Classes
 
                 do
                 {
-                    try
-                    {
+                    try             // This try should stay incase something is entered that is not a numeral.
+                    {               // however, the checking if is valid bill should be moved to VendingMachine.
                         decimal temp = decimal.Parse(bills);
                         if (temp == 1 || temp == 2 || temp == 5 || temp == 10 || temp == 20 || temp == 50 || temp == 100)
                         {

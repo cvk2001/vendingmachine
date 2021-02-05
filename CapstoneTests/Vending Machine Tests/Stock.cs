@@ -6,17 +6,18 @@ using System.IO;
 using Capstone.Classes;
 
 namespace CapstoneTests.Vending_Machine_Tests
-{[TestClass]
+{
+    [TestClass]
     public class VendingMachineTest
     {
         [TestMethod]
         public void FileExistTest()
         {
-            //Arrange
+            // Arrange
             VendingMachine vendingMachine = new VendingMachine();
-            //Act
+            // Act
             bool actualResult = vendingMachine.Stock();
-            //Assert
+            // Assert
             Assert.IsTrue(actualResult);
         }
         [TestMethod]
@@ -27,7 +28,7 @@ namespace CapstoneTests.Vending_Machine_Tests
         [TestMethod]
         public void StockItemsHappyPathTest()
         {
-            //Arrange
+            // Arrange
             VendingMachine vendingMachine = new VendingMachine();
             Dictionary<string, string> expectedDictionary = new Dictionary<string, string>();
             expectedDictionary["A1"] = "Potato Crisps";
@@ -46,10 +47,11 @@ namespace CapstoneTests.Vending_Machine_Tests
             expectedDictionary["D2"] = "Little League Chew";
             expectedDictionary["D3"] = "Chiclets";
             expectedDictionary["D4"] = "Triplemint";
-            //Act
+
+            // Act
             vendingMachine.Stock();
 
-            //assert
+            // Assert
             CollectionAssert.AreEqual(expectedDictionary, vendingMachine.Products.Values);
 
         }

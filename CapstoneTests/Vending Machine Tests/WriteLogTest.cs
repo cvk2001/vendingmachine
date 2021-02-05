@@ -12,7 +12,7 @@ namespace CapstoneTests.Vending_Machine_Tests
         [TestMethod]
         public void WriteLogTest()
         {
-            //assert
+            // Assert
             Assert.IsTrue(File.Exists(Path.Combine(Environment.CurrentDirectory + "log.txt")));
         }
     }
