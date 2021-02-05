@@ -41,6 +41,10 @@ namespace Capstone.Classes
             VendingMachine Machine = new VendingMachine();
             bool keepShopping = true;
 
+            Console.WriteLine("Welcome to the...\n");
+            TitlePrint();
+            Console.WriteLine("\n\n");
+
             do
             {
                 keepShopping = MainMenuSwitch(MainMenuChoice());
@@ -248,6 +252,53 @@ namespace Capstone.Classes
             Console.WriteLine(printChange);
 
             return printChange;
+        }
+
+        public void TitlePrint()
+        {
+            Random rand = new Random();
+
+            string workingDirectory = Environment.CurrentDirectory;
+            string titleFile = "TitleVendoMatic.txt";
+            string fullPath = Path.Combine(workingDirectory, titleFile);
+
+            ConsoleColor[] colors = new ConsoleColor[]
+            {
+                ConsoleColor.DarkRed,
+                ConsoleColor.Red,
+                ConsoleColor.DarkYellow,
+                ConsoleColor.Yellow,
+                ConsoleColor.DarkGreen,
+                ConsoleColor.Green,
+                ConsoleColor.Cyan,
+                ConsoleColor.DarkCyan,
+                ConsoleColor.Blue
+            };
+            int colorIndex = rand.Next(colors.Length);
+
+            Console.WindowWidth = 150;
+
+            try
+            {
+                using(StreamReader sr = new StreamReader(fullPath))
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        if(colorIndex >= colors.Length)
+                        {
+                            colorIndex = 0;
+                        }
+                        Console.ForegroundColor = colors[colorIndex];
+                        Console.WriteLine(sr.ReadLine());
+                        colorIndex++;
+                    }
+                }
+            } catch(Exception e)
+            {
+                Console.WriteLine("Vendo-Matic 800");
+            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 }
