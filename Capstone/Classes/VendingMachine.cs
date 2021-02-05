@@ -76,8 +76,41 @@ namespace Capstone.Classes
             
             return false;
         }
-        public bool WriteLog()
+
+        //so for money added or withdrawn it shows "FEED MONEY: 5.00 (Money to depoit) 5.00(New Balance)
+        //for product bought, it shows product name: 10.00(balance) 8.50(ending balance)
+        //made 2 methods to handle each.  Maybe we could have done one but since the format is mostly the same, 
+        //I couldn't figure out how to overload the method since they were the same.
+        //I think this will do the trick when we are able to pass the appropriate data in.  
+
+        public bool WriteLogBalance(string transActionName, decimal amountOfTX, decimal balance)
         {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter("log.txt",true))
+                {
+                    sw.WriteLine($"{DateTime.Now} {transActionName}: {amountOfTX} {balance}");
+                }
+            }catch (IOException e)
+            {
+                Console.WriteLine("something happened to the file");
+            }
+
+            return false;
+        } public bool WriteLogPurchase(string productName, decimal currentBalance, decimal endingBallance)
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter("log.txt", true))
+                {
+                    sw.WriteLine($"{DateTime.Now} {productName}: {currentBalance} {endingBallance}");
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("something happened to the file");
+            }
+
 
 
             return false;
