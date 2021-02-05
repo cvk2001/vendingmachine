@@ -25,7 +25,7 @@ namespace Capstone.Classes
 
         // Methods
         //--------
-        public bool Stock()
+        private bool Stock()
         {
             string directory = Environment.CurrentDirectory;    // Eventually we will want to have this set in the constructor to the Working Directory property.
             string fileName = "vendingmachine.csv";
@@ -40,7 +40,7 @@ namespace Capstone.Classes
                     while (!sr.EndOfStream)
                     {
                         string line = sr.ReadLine();
-                        string[] lineSeperated = line.Split('|');
+                        string[] lineSeperated = line.Split('|',StringSplitOptions.RemoveEmptyEntries);
                         string productName = lineSeperated[1];
                         decimal price = decimal.Parse(lineSeperated[2]);
 
@@ -63,7 +63,6 @@ namespace Capstone.Classes
                                 
                         }
 
-
                         Products[lineSeperated[0]] = temp;
                         Quantities[lineSeperated[0]] = 5;
                     }
@@ -71,7 +70,11 @@ namespace Capstone.Classes
             }
             catch(FileNotFoundException ex)
             {
-                Console.WriteLine("There has been a file error after the program began. Please try again");
+                Console.WriteLine("There has been a file error after the program began. Please try again.");
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("An unexpected error occured. Please try again.");
             }
             
             return false;
@@ -84,7 +87,8 @@ namespace Capstone.Classes
             {
                 using (StreamWriter sw = new StreamWriter("log.txt",true))
                 {
-                    sw.WriteLine($"{DateTime.Now} {transActionName}: {amountOfTX} {Balance}");
+                    sw.WriteLine($"{DateTime.Now} {transActionName + ":".PadRight(20)}" +
+                        $" {amountOfTX.ToString("C2").PadLeft(6)} {Balance.ToString("C2").PadLeft(6)}");
                 }
             }catch (IOException e)
             {
@@ -98,7 +102,8 @@ namespace Capstone.Classes
             {
                 using (StreamWriter sw = new StreamWriter("log.txt", true))
                 {
-                    sw.WriteLine($"{DateTime.Now} {productName}: {initialBalance} {Balance}");
+                    sw.WriteLine($"{DateTime.Now} {productName.PadRight(20)}: " +
+                        $"{initialBalance.ToString("C2").PadLeft(6)} {Balance.ToString("C2").PadLeft(6)}");
                 }
             }
             catch (IOException e)
@@ -127,21 +132,68 @@ namespace Capstone.Classes
         }
         public string DispenseItem(string slotLocation)
         {
-            decimal initialBalance = Balance;
-            Quantities[slotLocation]--;
-            Balance -= Products[slotLocation].Price;
-            WriteLogPurchase(Products[slotLocation].ProductName, initialBalance);
-            return $"{Products[slotLocation].ProductName} {Products[slotLocation].Price} " +
-                $"{Balance} \n {Products[slotLocation].Sound()}";
+            string itemDispensed = "";
+
+            if (Products.ContainsKey(slotLocation))
+            {
+                if(Quantities[slotLocation] > 0)
+                {
+                    if(Balance >= Products[slotLocation].Price)
+                    {
+                        decimal initialBalance = Balance;
+                        Quantities[slotLocation]--;
+                        Balance -= Products[slotLocation].Price;
+                        WriteLogPurchase(Products[slotLocation].ProductName, initialBalance);
+                        itemDispensed = $"{Products[slotLocation].ProductName} {Products[slotLocation].Price} " +
+                            $"{Balance} \n {Products[slotLocation].Sound()}";
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Your Balance is insufficient. Please enter more bills, or select a different item.");
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("The product you have selected is out of stock. Please select another item.");
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Invalid slot. Please select an existing slot.");
+            }
+
+            return itemDispensed;
         }
-        //private bool UpdateQuantity()
+        //private bool UpdateQuantity() // If we should ever decide to add a restock feature.
         //{
         //    return false;
         //}
         public Dictionary<string, int> GiveChange()
         {
+            decimal intialBalance = Balance;
 
             Dictionary<string, int> change = new Dictionary<string, int>();
+
+            Dictionary<string, decimal> denominationsOfChange = new Dictionary<string, decimal>()
+            {
+                {"Twenties", 20 },
+                {"Tens", 10 },
+                {"Fives", 5 },
+                {"Ones", 1 },
+                {"Quarters", 0.25M },
+                {"Dimes", 0.10M },
+                {"Nickles", 0.05M },
+                {"Pennies", 0.01M }
+            };
+
+            foreach(KeyValuePair<string, decimal> kvp in denominationsOfChange)
+            {
+                string type = kvp.Key;
+                decimal amount = kvp.Value;
+
+                //if(Balance / )
+            }
+
             if (Balance % 20 == 0)
             {
                 int twenties = Convert.ToInt32(Balance) / 20;
@@ -182,6 +234,8 @@ namespace Capstone.Classes
             }
                        
                 change["pennies"] = Convert.ToInt32(Balance)*100;
+
+            WriteLogBalance("Give Change", intialBalance);
                        
             return change;
             

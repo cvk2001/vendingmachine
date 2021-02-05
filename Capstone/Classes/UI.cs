@@ -93,7 +93,7 @@ namespace Capstone.Classes
         private decimal FeedMoney()
         {
             decimal balance = 0M;
-            string bills = "";
+            string bill = "";
             bool moreBills = false;
             string yn = "";
 
@@ -102,13 +102,13 @@ namespace Capstone.Classes
                 bool validBill = false;
 
                 Console.Write("Please enter the bill you would like to insert: ");
-                bills = Console.ReadLine();
+                bill = Console.ReadLine();
 
                 do
                 {
-                    try             // This try should stay incase something is entered that is not a numeral.
-                    {               // however, the checking if is valid bill should be moved to VendingMachine.
-                        decimal temp = decimal.Parse(bills);
+                    try
+                    {
+                        decimal temp = decimal.Parse(bill);
                         balance = Machine.AcceptMoney(temp);
                         validBill = true;
                         Console.WriteLine($"So far you have inserted {balance.ToString("C2")}.\n");
@@ -117,7 +117,7 @@ namespace Capstone.Classes
                     catch (Exception e)
                     {
                         Console.Write("Please enter a valid Bill: ");
-                        bills = Console.ReadLine();
+                        bill = Console.ReadLine();
                         validBill = false;
                     }
 
