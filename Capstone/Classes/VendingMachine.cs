@@ -37,8 +37,8 @@ namespace Capstone.Classes
             {
                 using (StreamReader sr = new StreamReader(fullPath))
                 {
-                    while (!sr.EndOfStream) 
-                    { 
+                    while (!sr.EndOfStream)
+                    {
                         string line = sr.ReadLine();
                         string[] lineSeperated = line.Split('|');
                         string productName = lineSeperated[1];
@@ -47,7 +47,7 @@ namespace Capstone.Classes
                         switch (lineSeperated[3])
                         {
                             case "Candy":
-                                temp = new Candy(productName,price);
+                                temp = new Candy(productName, price);
                                 break;
                             case "Chip":
                                 temp = new Chip(productName, price);
@@ -60,12 +60,12 @@ namespace Capstone.Classes
                                 break;
                             default:
                                 throw new FormatException("Something is terribly wrong Dave");
-                                break;
+                                
                         }
-                        
-                                                                    // This makes me think we should be setting the item name here and getting it from the vending machine though an item should know its name
-                        Products[lineSeperated[0]] = temp;          // I tried some things with item, but what I tried didn't work.
-                        Quantities[lineSeperated[0]] = 5;           // maybe the dictionary statement should read public Dictionary<string,string> Products{get; private set;} = new Dictionary<string,item>;?
+
+
+                        Products[lineSeperated[0]] = temp;
+                        Quantities[lineSeperated[0]] = 5;
                     }
                 }
             }
@@ -77,19 +77,14 @@ namespace Capstone.Classes
             return false;
         }
 
-        //so for money added or withdrawn it shows "FEED MONEY: 5.00 (Money to depoit) 5.00(New Balance)
-        //for product bought, it shows product name: 10.00(balance) 8.50(ending balance)
-        //made 2 methods to handle each.  Maybe we could have done one but since the format is mostly the same, 
-        //I couldn't figure out how to overload the method since they were the same.
-        //I think this will do the trick when we are able to pass the appropriate data in.  
-
-        public bool WriteLogBalance(string transActionName, decimal amountOfTX, decimal balance)
+        
+        public bool WriteLogBalance(string transActionName, decimal amountOfTX)
         {
             try
             {
                 using (StreamWriter sw = new StreamWriter("log.txt",true))
                 {
-                    sw.WriteLine($"{DateTime.Now} {transActionName}: {amountOfTX} {balance}");
+                    sw.WriteLine($"{DateTime.Now} {transActionName}: {amountOfTX} {Balance}");
                 }
             }catch (IOException e)
             {
@@ -97,13 +92,13 @@ namespace Capstone.Classes
             }
 
             return false;
-        } public bool WriteLogPurchase(string productName, decimal currentBalance, decimal endingBallance)
+        } public bool WriteLogPurchase(string productName, decimal initialBalance)
         {
             try
             {
                 using (StreamWriter sw = new StreamWriter("log.txt", true))
                 {
-                    sw.WriteLine($"{DateTime.Now} {productName}: {currentBalance} {endingBallance}");
+                    sw.WriteLine($"{DateTime.Now} {productName}: {initialBalance} {Balance}");
                 }
             }
             catch (IOException e)
@@ -115,24 +110,81 @@ namespace Capstone.Classes
 
             return false;
         }
-        public decimal AcceptMoney()
+        public decimal AcceptMoney(decimal bill)
         {
+            
+            if (bill == 1 || bill == 2 || bill == 5 || bill == 10 || bill == 20 || bill == 50 || bill == 100)
+            {
+                Balance += bill;
+            }
+            else
+            {
+                throw new ArgumentException("That is not a valid Bill");
+            }
+            WriteLogBalance("FEED MONEY",bill);
+
             return Balance;
         }
-        public decimal DispenseItem()
+        public string DispenseItem(string slotLocation)
         {
-            return Balance;
+            decimal initialBalance = Balance;
+            Quantities[slotLocation]--;
+            Balance -= Products[slotLocation].Price;
+            WriteLogPurchase(Products[slotLocation].ProductName, initialBalance);
+            return $"{Products[slotLocation].ProductName} {Products[slotLocation].Price} " +
+                $"{Balance} \n {Products[slotLocation].Sound()}";
         }
-        private bool UpdateQuantity()
-        {
-            return false;
-        }
+        //private bool UpdateQuantity()
+        //{
+        //    return false;
+        //}
         public Dictionary<string, int> GiveChange()
         {
-            return new Dictionary<string, int>()
+
+            Dictionary<string, int> change = new Dictionary<string, int>();
+            if (Balance % 20 == 0)
             {
-                {"a", 0 }
-            };
+                int twenties = Convert.ToInt32(Balance) / 20;
+                change["twenties"] = twenties;
+                Balance -= twenties * 20;
+            }if (Balance % 10 == 0)
+            {
+                int tens = Convert.ToInt32(Balance) / 10;
+                change["tens"] = tens;
+                Balance -= tens * 10;
+            }if (Balance % 5 == 0)
+            {
+                int fives = Convert.ToInt32(Balance) / 5;
+                change["fives"] = fives;
+                Balance -= fives * 5;
+            }
+            if (Balance % 1 == 0)
+            {
+                int ones = Convert.ToInt32(Balance);
+                change["ones"] = ones;
+                Balance -= ones;
+            }
+            if ((Balance*100) % 25 == 0)
+            {
+                int quarters = Convert.ToInt32(Balance*100) / 25;
+                change["quarters"] = quarters;
+                Balance -= quarters * 0.25M;
+            }if ((Balance*100) % 10 == 0)
+            {
+                int dimes = Convert.ToInt32(Balance*100) / 10;
+                change["dimes"] = dimes;
+                Balance -= dimes * 0.10M;
+            }if ((Balance*100) % 5 == 0)
+            {
+                int nickels = Convert.ToInt32(Balance*100) / 5;
+                change["nickels"] = nickels;
+                Balance -= nickels * 0.25M;
+            }
+                       
+                change["pennies"] = Convert.ToInt32(Balance)*100;
+                       
+            return change;
+            
         }
     }
 }

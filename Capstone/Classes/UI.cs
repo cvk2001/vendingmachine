@@ -71,7 +71,7 @@ namespace Capstone.Classes
 
             return choice;
         }
-        private string ProductList()
+        private string PurchaseProduct()
         {
             string slotLocation = "";
 
@@ -92,16 +92,16 @@ namespace Capstone.Classes
         }
         private decimal FeedMoney()
         {
-            decimal money = 0M;
+            decimal balance = 0M;
             string bills = "";
-            bool finished = false;
+            bool moreBills = false;
             string yn = "";
 
             do
             {
                 bool validBill = false;
 
-                Console.Write("Please enter the amount of mouney you would like to insert: ");
+                Console.Write("Please enter the bill you would like to insert: ");
                 bills = Console.ReadLine();
 
                 do
@@ -109,22 +109,17 @@ namespace Capstone.Classes
                     try             // This try should stay incase something is entered that is not a numeral.
                     {               // however, the checking if is valid bill should be moved to VendingMachine.
                         decimal temp = decimal.Parse(bills);
-                        if (temp == 1 || temp == 2 || temp == 5 || temp == 10 || temp == 20 || temp == 50 || temp == 100)
-                        {
-                            money += temp;
-                            validBill = true;
-                            Console.WriteLine($"So far you have inserted {money.ToString("C2")}.\n");
-                        }
+                        balance = Machine.AcceptMoney(temp);
+                        validBill = true;
+                        Console.WriteLine($"So far you have inserted {balance.ToString("C2")}.\n");
+                        
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Please enter real money.");
+                        Console.Write("Please enter a valid Bill: ");
+                        bills = Console.ReadLine();
                         validBill = false;
                     }
-
-                    Console.Write("Please enter a valid bill: ");
-                    bills = Console.ReadLine();
-                    validBill = false;
 
                 } while (!validBill);
 
@@ -134,11 +129,11 @@ namespace Capstone.Classes
                     yn = Console.ReadLine().Trim().ToLower().Substring(0, 1);
                 } while (yn != "y" && yn != "n");
 
-                finished = yn == "y" ? true : false;
+                moreBills = yn == "y" ? true : false;
 
-            } while (!finished);
+            } while (moreBills);
             
-            return money;
+            return balance;
         }
         private bool MainMenuSwitch(string mainMenu)
         {
@@ -148,10 +143,11 @@ namespace Capstone.Classes
             switch (mainMenu)
             {
                 case "1":
-                    choice = ProductList();
+                    choice = PurchaseProduct();
                     break;
                 case "2":
                     choice = PurchaseMenu();
+                    PurchaseMenuSwitch(choice);
                     break;
                 case "3":
                     Console.WriteLine("Have a great day!");
@@ -166,6 +162,34 @@ namespace Capstone.Classes
             }
 
             return doneShopping;
+        }
+        private void PurchaseMenuSwitch(string purchaseMenu)
+        {
+            switch (purchaseMenu)
+            {
+                case "1":
+                    FeedMoney();
+                    break;
+                case "2":
+                    string slotLocation = PurchaseProduct();
+                    Machine.DispenseItem(slotLocation);
+                    break;
+                case "3":
+                    Console.WriteLine(PrintChange(Machine.GiveChange()));
+                    break;
+                default:
+                    throw new ArgumentException("Selection was not a \"1\", \"2\", or \"3\"");
+
+            }
+        }
+        private string PrintChange(Dictionary<string,int>change)
+        {
+            string printChange = "";
+            foreach (KeyValuePair<string,int> kvp  in change)
+            {
+                printChange += $"{kvp.Key}: {kvp.Value}\n";
+            }
+            return printChange;
         }
     }
 }
