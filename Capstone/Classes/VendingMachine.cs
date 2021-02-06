@@ -291,7 +291,7 @@ namespace Capstone.Classes
                     {
                         sw.WriteLine($"{kvp.Key}|{kvp.Value}");
                     }
-                    sw.WriteLine($"\n**TOTAL SALES**\n Gross Sales: {totalSales}");
+                    sw.WriteLine($"\n**TOTAL SALES**\n Gross Sales: {totalSales.ToString("C2")}");
                     
                 }
             }
