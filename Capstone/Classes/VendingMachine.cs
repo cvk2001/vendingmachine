@@ -248,7 +248,6 @@ namespace Capstone.Classes
         public void HiddenSalesReport()
         {
             decimal totalSales = 0.0M;
-            int itemCount = 0;
             Dictionary<string,int> salesItems = new Dictionary<string, int>();
             string fileName = "ongoingsales.txt";
             string fullPath = Path.Combine(WorkingDirectory, fileName);
@@ -260,7 +259,7 @@ namespace Capstone.Classes
                     while (!sr.EndOfStream)
                     {
                         string[] line = sr.ReadLine().Split('|');
-                        //itemCount++;
+                        
                         if (salesItems.ContainsKey(line[0]))
                         {
                             salesItems[line[0]] += 1;
