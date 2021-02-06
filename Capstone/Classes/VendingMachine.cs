@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Globalization;
 using System.Reflection;
+using System.Collections;
 
 namespace Capstone.Classes
 {
@@ -160,9 +161,11 @@ namespace Capstone.Classes
 
             return Balance;
         }
-        public string DispenseItem(string slotLocation)
+        public Dictionary<string, string> DispenseItem(string slotLocation)
         {
-            string itemDispensed = "";
+            Dictionary<string, string> itemDispensed = new Dictionary<string, string>();
+
+            slotLocation = slotLocation.ToUpperInvariant();
 
             if (Products.ContainsKey(slotLocation))
             {
@@ -175,10 +178,12 @@ namespace Capstone.Classes
                         Balance -= Products[slotLocation].Price;
                         WriteLogPurchase(Products[slotLocation].ProductName, slotLocation, initialBalance);
                         SalesTracker(Products[slotLocation].ProductName, Products[slotLocation].Price);
-                        itemDispensed = $"\nThank you for purchasing: {Products[slotLocation].ProductName}\n" +
-                            $"It cost {Products[slotLocation].Price.ToString("C2")}\n" +
-                            $"Your current Balance is {Balance.ToString("C2")}\n" +
-                            $"{Products[slotLocation].Sound()}";
+                        
+                        // Prep the strings for printing.
+                        itemDispensed["name"]  = Products[slotLocation].ProductName;
+                        itemDispensed["price"] = Products[slotLocation].Price.ToString("C2");
+                        itemDispensed["balance"] = Balance.ToString("C2");
+                        itemDispensed["sound"] = Products[slotLocation].Sound();
                     }
                     else
                     {
@@ -219,11 +224,16 @@ namespace Capstone.Classes
                 {"Pennies", 0.01M }
             };
 
+            // Loops through the various types of bills or coins in descending order.
+            // It only lists the bills or coins that it will be giving for change.
             foreach(KeyValuePair<string, decimal> kvp in denominationsOfChange)
             {
                 string type = kvp.Key;
                 decimal amount = kvp.Value;
 
+                // If the Balance can be divided by the amount and has a whole part.
+                // If so, then it finds out how many times the makes the bill or coin amount,
+                // equal to the whole part and suptracts it from the balance.
                 if(Balance / amount >= 1)
                 {
                     int howMany = (int)(Balance / amount);

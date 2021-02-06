@@ -213,8 +213,12 @@ namespace Capstone.Classes
             {
                 try
                 {
-                    string itemPrintOut = Machine.DispenseItem(slotLocation);
-                    Console.WriteLine(itemPrintOut);
+                    Dictionary<string, string> itemPrintOut = Machine.DispenseItem(slotLocation);
+                    Console.WriteLine($"\nThank you for purchasing: {itemPrintOut["name"]}\n" +
+                           $"It cost {itemPrintOut["price"]}\n" +
+                           $"Your current Balance is {itemPrintOut["balance"]}\n" +
+                           $"{itemPrintOut["sound"]}");
+         
                     isDispensed = true;
                 } catch(Exception ex)
                 {
