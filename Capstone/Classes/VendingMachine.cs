@@ -227,7 +227,7 @@ namespace Capstone.Classes
                             for (int i = 0; i < line.Length; i++)
                             {
                                 
-                                    salesItems[line[3]] = itemCount + 1;
+                                    //salesItems[line[3]] = itemCount + 1;
                             }
                         }
                         

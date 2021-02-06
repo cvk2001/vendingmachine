@@ -193,7 +193,7 @@ namespace Capstone.Classes
                 }
                 catch (Exception e)
                 {
-                    Console.Write("Please enter a valid Bill: ");
+                    Console.Write("Please enter a valid bill: ");
                     bill = Console.ReadLine();
                     validBill = false;
                 }

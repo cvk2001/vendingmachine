@@ -31,10 +31,11 @@ namespace CapstoneTests.UITests
         }
         */
 
-        [TestClass]
-        public void MainMenuSwitchTest()
-        {
+        //[DataTestClass]
+        //[DataRow(1,true)]
+        //public void MainMenuSwitchTest(int choice, bool result)
+        //{
 
-        }
+        //}
     }
 }
