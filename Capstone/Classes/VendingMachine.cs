@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Globalization;
-using System.Reflection;
+
+
 
 namespace Capstone.Classes
 {
@@ -132,7 +132,7 @@ namespace Capstone.Classes
 
             try
             {
-                using(StreamWriter sw = new StreamWriter("onGoingSales.txt",true))
+                using(StreamWriter sw = new StreamWriter("ongoingsales.txt",true))
                 {
                     sw.WriteLine($"{productName}|{price}");
                 }
@@ -238,58 +238,69 @@ namespace Capstone.Classes
         }
         public void HiddenSalesReport()
         {
-            //int itemCount = 0;
-            //Dictionary<string,int> salesItems = new Dictionary<string, int>();
-            //string fileName = "log.txt";
-            //string fullPath = Path.Combine(WorkingDirectory, fileName);
-            //try
-            //{
-            //    using (StreamReader sr = new StreamReader(fullPath))
-            //    {
+            decimal totalSales = 0.0M;
+            int itemCount = 0;
+            Dictionary<string,int> salesItems = new Dictionary<string, int>();
+            string fileName = "ongoingsales.txt";
+            string fullPath = Path.Combine(WorkingDirectory, fileName);
+            try
+            {
+                using (StreamReader sr = new StreamReader(fullPath))
+                {
 
-            //        while (!sr.EndOfStream)
-            //        {
-            //            string line = sr.ReadLine();
-            //            if (!line.Contains("FEED") || !line.Contains("GIVE"))
-            //            { 
+                    while (!sr.EndOfStream)
+                    {
+                        string[] line = sr.ReadLine().Split('|');
+                        //itemCount++;
+                        if (salesItems.ContainsKey(line[0]))
+                        {
+                            salesItems[line[0]] += 1;
+                        }
+                        else
+                        {
+                            salesItems[line[0]] = 1;
 
-            //                for (int i = 0; i < line.Length; i++)
-            //                {
-                                
-            //                        salesItems[line[3]] = itemCount + 1;
-            //                }
-            //            }
-                        
-                        
-            //        }
-            //    }
-            //}
-            //catch (FileNotFoundException e)
-            //{
-            //    Console.WriteLine("File not found...no report for you");
-            //}catch (Exception e)
-            //{
-            //    Console.WriteLine("An error occurred");
-            //}
-            //try
-            //{
-            //    using (StreamWriter sw = new StreamWriter("SalesReport" + DateTime.Now + ".txt"))
-            //    {
-            //        sw.WriteLine($"{salesItems.Keys}|{salesItems.Values}");
-            //    }
-            //}
-            //catch (FileNotFoundException error)
-            //{
-            //    Console.WriteLine("something happened to the file");
-            //}catch (Exception e)
-            //{
-            //    Console.WriteLine("an error occurred");
-            //}
+                        }
+                        totalSales = totalSales + decimal.Parse(line[1]);    
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Console.WriteLine("File not found...no report for you");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occurred");
+                Console.WriteLine(e.Message);
+            }
+            try
+            {
+                using (StreamWriter sw = new StreamWriter("SalesReport" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss") + ".txt",true))
+                {
+                    foreach (KeyValuePair<string,int> kvp  in salesItems)
+                    {
+                        sw.WriteLine($"{kvp.Key}|{kvp.Value}");
+                    }
+                    sw.WriteLine($"\n**TOTAL SALES**\n Gross Sales: {totalSales}");
                     
+                }
+            }
+            catch (FileNotFoundException error)
+            {
+                Console.WriteLine("something happened to the file");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("an error occurred");
+                Console.WriteLine(e.Message);
+            }
+
         }
     }
 }
 
 
-    
 
+
+ 

@@ -96,6 +96,7 @@ namespace Capstone.Classes
                     break;
                 case "4":
                     // Print Sales Report
+                    Machine.HiddenSalesReport();
                     break;
                 default:
                     keepShopping = true;
