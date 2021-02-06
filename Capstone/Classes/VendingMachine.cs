@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Globalization;
+using System.Reflection;
 
 namespace Capstone.Classes
 {
@@ -26,7 +28,7 @@ namespace Capstone.Classes
 
         // Methods
         //--------
-        private bool Stock()
+        private void Stock()
         {
             string fileName = "vendingmachine.csv";
             string fullPath = Path.Combine(WorkingDirectory, fileName);
@@ -76,8 +78,6 @@ namespace Capstone.Classes
             {
                 Console.WriteLine("An unexpected error occured. Please try again.");
             }
-            
-            return false;
         }
 
         

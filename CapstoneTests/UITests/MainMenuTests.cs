@@ -7,7 +7,7 @@ using Capstone.Classes;
 namespace CapstoneTests.UITests
 {
     [TestClass]
-    public class MainMenuTest
+    public class MainMenuTests
     {
         public UI TestUI { get; set; } = new UI();
 
@@ -30,5 +30,11 @@ namespace CapstoneTests.UITests
             Assert.AreEqual(output, UI.MainMenu(input));
         }
         */
+
+        [TestClass]
+        public void MainMenuSwitchTest()
+        {
+
+        }
     }
 }

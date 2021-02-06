@@ -16,9 +16,9 @@ namespace CapstoneTests.Vending_Machine_Tests
             // Arrange
             VendingMachine vendingMachine = new VendingMachine();
             // Act
-            bool actualResult = vendingMachine.Stock();
+            //bool actualResult = vendingMachine.Stock();   // I changed Stock to void since it is now private and run in the constructor.
             // Assert
-            Assert.IsTrue(actualResult);
+            //Assert.IsTrue(actualResult);
         }
         [TestMethod]
         public void AddItemsHappyPathTest()
@@ -49,7 +49,7 @@ namespace CapstoneTests.Vending_Machine_Tests
             expectedDictionary["D4"] = "Triplemint";
 
             // Act
-            vendingMachine.Stock();
+            //vendingMachine.Stock();       // Stock is called in the Constructor, so I made it Private. 
 
             // Assert
             CollectionAssert.AreEqual(expectedDictionary, vendingMachine.Products.Values);
