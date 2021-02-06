@@ -7,7 +7,7 @@ using Capstone.Classes;
 namespace CapstoneTests.UITests
 {
     [TestClass]
-    public class MainMenuTests
+    public class MainMenuSwitchTests
     {
         public UI TestUI { get; set; } = new UI();
 
@@ -31,11 +31,16 @@ namespace CapstoneTests.UITests
         }
         */
 
+        // Error because MainMenuSwitch is private.
         //[DataTestClass]
-        //[DataRow(1,true)]
-        //public void MainMenuSwitchTest(int choice, bool result)
+        //[DataRow(1, true)]
+        //[DataRow(2, true)]
+        //[DataRow(3, true)]
+        //[DataRow(4, true)]
+        //public void MainMenuSwitchTrueTest(int choice, bool result)
         //{
-
+        //    // Act and Assert
+        //    Assert.IsTrue(UI.MainMenuSwitch(choice));
         //}
     }
 }

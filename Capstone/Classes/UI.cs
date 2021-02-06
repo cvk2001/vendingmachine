@@ -74,7 +74,7 @@ namespace Capstone.Classes
         }
         private void MainMenuPrint()
         {
-
+            // If we want to ascii art up the main menu.
         }
         private bool MainMenuSwitch(string choice)
         {
@@ -254,7 +254,7 @@ namespace Capstone.Classes
             return printChange;
         }
 
-        public void TitlePrint()
+        private void TitlePrint()
         {
             Random rand = new Random();
 

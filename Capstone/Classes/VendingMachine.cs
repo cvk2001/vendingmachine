@@ -81,8 +81,10 @@ namespace Capstone.Classes
         }
 
         
-        public bool WriteLogBalance(string transactionName, decimal amountOfTX)
+        private bool WriteLogBalance(string transactionName, decimal amountOfTX)
         {
+            bool runSuccessfully = false;
+
             try
             {
                 using (StreamWriter sw = new StreamWriter("log.txt",true))
@@ -90,14 +92,20 @@ namespace Capstone.Classes
                     sw.WriteLine($"{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss")} {transactionName.PadRight(23)}" +
                         $" {amountOfTX.ToString("C2").PadLeft(8)} {Balance.ToString("C2").PadLeft(8)}");
                 }
+
+                runSuccessfully = true;
+
             }catch (IOException e)
             {
-                Console.WriteLine("something happened to the file");
+                Console.WriteLine("Something happened to the file.");
             }
 
-            return false;
-        } public bool WriteLogPurchase(string productName, string slotLocation, decimal initialBalance)
+            return runSuccessfully;
+        } 
+        private bool WriteLogPurchase(string productName, string slotLocation, decimal initialBalance)
         {
+            bool runSuccessfully = false;
+
             try
             {
                 using (StreamWriter sw = new StreamWriter("log.txt", true))
@@ -107,28 +115,35 @@ namespace Capstone.Classes
                         $"{initialBalance.ToString("C2").PadLeft(8)} " +
                         $"{Balance.ToString("C2").PadLeft(8)}");
                 }
+
+                runSuccessfully = true;
             }
             catch (IOException e)
             {
                 Console.WriteLine("something happened to the file");
             }
 
-            return false;
+            return runSuccessfully;
         }
 
         public bool SalesTracker(string productName, decimal price)
         {
+            bool runSuccessfully = false;
+
             try
             {
                 using(StreamWriter sw = new StreamWriter("onGoingSales.txt",true))
                 {
                     sw.WriteLine($"{productName}|{price}");
                 }
+
+                runSuccessfully = true;
             }catch (Exception e)
             {
 
             }
-            return true;
+
+            return runSuccessfully;
         }
         public decimal AcceptMoney(decimal bill)
         {
