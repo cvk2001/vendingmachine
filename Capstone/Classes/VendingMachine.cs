@@ -87,7 +87,7 @@ namespace Capstone.Classes
             {
                 using (StreamWriter sw = new StreamWriter("log.txt",true))
                 {
-                    sw.WriteLine($"{DateTime.Now} {transactionName.PadRight(23)}" +
+                    sw.WriteLine($"{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss")} {transactionName.PadRight(23)}" +
                         $" {amountOfTX.ToString("C2").PadLeft(8)} {Balance.ToString("C2").PadLeft(8)}");
                 }
             }catch (IOException e)
@@ -102,7 +102,7 @@ namespace Capstone.Classes
             {
                 using (StreamWriter sw = new StreamWriter("log.txt", true))
                 {
-                    sw.WriteLine($"{DateTime.Now} {productName.PadRight(20)}" +
+                    sw.WriteLine($"{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss")} {productName.PadRight(20)}" +
                         $"{slotLocation.PadRight(4)}" +
                         $"{initialBalance.ToString("C2").PadLeft(8)} " +
                         $"{Balance.ToString("C2").PadLeft(8)}");
@@ -113,9 +113,22 @@ namespace Capstone.Classes
                 Console.WriteLine("something happened to the file");
             }
 
-
-
             return false;
+        }
+
+        public bool SalesTracker(string productName, decimal price)
+        {
+            try
+            {
+                using(StreamWriter sw = new StreamWriter("onGoingSales.txt",true))
+                {
+                    sw.WriteLine($"{productName}|{price}");
+                }
+            }catch (Exception e)
+            {
+
+            }
+            return true;
         }
         public decimal AcceptMoney(decimal bill)
         {
@@ -146,6 +159,7 @@ namespace Capstone.Classes
                         Quantities[slotLocation]--;
                         Balance -= Products[slotLocation].Price;
                         WriteLogPurchase(Products[slotLocation].ProductName, slotLocation, initialBalance);
+                        SalesTracker(Products[slotLocation].ProductName, Products[slotLocation].Price);
                         itemDispensed = $"\nThank you for purchasing: {Products[slotLocation].ProductName}\n" +
                             $"It cost {Products[slotLocation].Price.ToString("C2")}\n" +
                             $"Your current Balance is {Balance.ToString("C2")}\n" +
@@ -209,53 +223,53 @@ namespace Capstone.Classes
         }
         public void HiddenSalesReport()
         {
-            int itemCount = 0;
-            Dictionary<string,int> salesItems = new Dictionary<string, int>();
-            string fileName = "log.txt";
-            string fullPath = Path.Combine(WorkingDirectory, fileName);
-            try
-            {
-                using (StreamReader sr = new StreamReader(fullPath))
-                {
+            //int itemCount = 0;
+            //Dictionary<string,int> salesItems = new Dictionary<string, int>();
+            //string fileName = "log.txt";
+            //string fullPath = Path.Combine(WorkingDirectory, fileName);
+            //try
+            //{
+            //    using (StreamReader sr = new StreamReader(fullPath))
+            //    {
 
-                    while (!sr.EndOfStream)
-                    {
-                        string line = sr.ReadLine();
-                        if (!line.Contains("FEED") || !line.Contains("GIVE"))
-                        { 
+            //        while (!sr.EndOfStream)
+            //        {
+            //            string line = sr.ReadLine();
+            //            if (!line.Contains("FEED") || !line.Contains("GIVE"))
+            //            { 
 
-                            for (int i = 0; i < line.Length; i++)
-                            {
+            //                for (int i = 0; i < line.Length; i++)
+            //                {
                                 
-                                    salesItems[line[3]] = itemCount + 1;
-                            }
-                        }
+            //                        salesItems[line[3]] = itemCount + 1;
+            //                }
+            //            }
                         
                         
-                    }
-                }
-            }
-            catch (FileNotFoundException e)
-            {
-                Console.WriteLine("File not found...no report for you");
-            }catch (Exception e)
-            {
-                Console.WriteLine("Some other error occurred that Zach could not figure out");
-            }
-            try
-            {
-                using (StreamWriter sw = new StreamWriter("SalesReport" + DateTime.Now + ".txt"))
-                {
-                    sw.WriteLine($"{salesItems.Keys}|{salesItems.Values}");
-                }
-            }
-            catch (FileNotFoundException error)
-            {
-                Console.WriteLine("something happened to the file");
-            }catch (Exception e)
-            {
-                Console.WriteLine("Zach missed something again");
-            }
+            //        }
+            //    }
+            //}
+            //catch (FileNotFoundException e)
+            //{
+            //    Console.WriteLine("File not found...no report for you");
+            //}catch (Exception e)
+            //{
+            //    Console.WriteLine("An error occurred");
+            //}
+            //try
+            //{
+            //    using (StreamWriter sw = new StreamWriter("SalesReport" + DateTime.Now + ".txt"))
+            //    {
+            //        sw.WriteLine($"{salesItems.Keys}|{salesItems.Values}");
+            //    }
+            //}
+            //catch (FileNotFoundException error)
+            //{
+            //    Console.WriteLine("something happened to the file");
+            //}catch (Exception e)
+            //{
+            //    Console.WriteLine("an error occurred");
+            //}
                     
         }
     }
