@@ -41,20 +41,24 @@ namespace CapstoneTests.Vending_Machine_Tests
         public void WriteLogBalanceTest()
         {
             // Arrange
-            string directory = GetWorkingDirectory();
+            //string directory = GetWorkingDirectory();
+            Machine.AcceptMoney(5);
+            Machine.DispenseItem("A1");
 
             // Assert
-            Assert.IsTrue(File.Exists(Path.Combine(directory, "log.txt")));
+            Assert.IsTrue(File.Exists(Path.Combine(Environment.CurrentDirectory, "log.txt")));
         }
 
         [TestMethod]
         public void WriteLogPurchaseTest()
         {
             // Arrange
-            string directory = GetWorkingDirectory();
+            //string directory = GetWorkingDirectory();
+            Machine.AcceptMoney(5);
+            Machine.DispenseItem("A1");
 
             // Assert
-            Assert.IsTrue(File.Exists(Path.Combine(directory, "log.txt")));
+            Assert.IsTrue(File.Exists(Path.Combine(Environment.CurrentDirectory, "log.txt")));
         }
     }
 }
