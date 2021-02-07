@@ -57,7 +57,7 @@ namespace Capstone.Classes
             string choice = "";
 
             //Console.Clear();
-            Console.Write("Please make a selection form the following options:\n" +
+            Console.Write("Please make a selection from the following options:\n" +
                 "(1) Display Vending Machine Items\n" +
                 "(2) Purchase\n" +
                 "(3) Exit\n" +
@@ -125,7 +125,7 @@ namespace Capstone.Classes
         {
             string choice = "";
 
-            Console.Write("\nPlease make a selection form the following options:\n" +
+            Console.Write("\nPlease make a selection from the following options:\n" +
                 "(1) Feed Money\n" +
                 "(2) Select Product\n" +
                 "(3) Finish Transaction\n" +
